@@ -1,3 +1,39 @@
+class PostComment {
+  final String id;
+  final String authorId;
+  final String authorName;
+  final String content;
+  final DateTime createdAt;
+  final int likes;
+
+  PostComment({
+    required this.id,
+    required this.authorId,
+    required this.authorName,
+    required this.content,
+    DateTime? createdAt,
+    this.likes = 0,
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  PostComment copyWith({
+    String? id,
+    String? authorId,
+    String? authorName,
+    String? content,
+    DateTime? createdAt,
+    int? likes,
+  }) {
+    return PostComment(
+      id: id ?? this.id,
+      authorId: authorId ?? this.authorId,
+      authorName: authorName ?? this.authorName,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+      likes: likes ?? this.likes,
+    );
+  }
+}
+
 class Post {
   final String id;
   final String authorId;
@@ -8,6 +44,10 @@ class Post {
   final int likes;
   final int comments;
   final bool isLikedByMe;
+  final List<PostComment> commentList;
+  final List<String> tags;
+  final String? location;
+  final bool isBookmarked;
 
   Post({
     required this.id,
@@ -19,6 +59,10 @@ class Post {
     this.likes = 0,
     this.comments = 0,
     this.isLikedByMe = false,
+    this.commentList = const [],
+    this.tags = const [],
+    this.location,
+    this.isBookmarked = false,
   }) : createdAt = createdAt ?? DateTime.now();
 
   Post copyWith({
@@ -31,6 +75,10 @@ class Post {
     int? likes,
     int? comments,
     bool? isLikedByMe,
+    List<PostComment>? commentList,
+    List<String>? tags,
+    String? location,
+    bool? isBookmarked,
   }) {
     return Post(
       id: id ?? this.id,
@@ -42,6 +90,10 @@ class Post {
       likes: likes ?? this.likes,
       comments: comments ?? this.comments,
       isLikedByMe: isLikedByMe ?? this.isLikedByMe,
+      commentList: commentList ?? this.commentList,
+      tags: tags ?? this.tags,
+      location: location ?? this.location,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
     );
   }
 }

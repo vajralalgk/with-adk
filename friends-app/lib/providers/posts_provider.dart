@@ -11,6 +11,31 @@ class PostsProvider extends ChangeNotifier {
       createdAt: DateTime.now().subtract(const Duration(hours: 2)),
       likes: 12,
       comments: 3,
+      location: 'Mount Rainier',
+      tags: ['hiking', 'nature'],
+      commentList: [
+        PostComment(
+          id: 'c1',
+          authorId: '2',
+          authorName: 'Bob Smith',
+          content: 'That looks amazing! I need to come next time.',
+          createdAt: DateTime.now().subtract(const Duration(hours: 1)),
+        ),
+        PostComment(
+          id: 'c2',
+          authorId: '4',
+          authorName: 'David Lee',
+          content: 'The weather was perfect for it!',
+          createdAt: DateTime.now().subtract(const Duration(minutes: 45)),
+        ),
+        PostComment(
+          id: 'c3',
+          authorId: 'me',
+          authorName: 'You',
+          content: 'Wish I could have joined!',
+          createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
+        ),
+      ],
     ),
     Post(
       id: '2',
@@ -20,6 +45,16 @@ class PostsProvider extends ChangeNotifier {
       createdAt: DateTime.now().subtract(const Duration(hours: 5)),
       likes: 8,
       comments: 5,
+      tags: ['cooking', 'food'],
+      commentList: [
+        PostComment(
+          id: 'c4',
+          authorId: '1',
+          authorName: 'Alice Johnson',
+          content: 'Recipe please! That sounds delicious.',
+          createdAt: DateTime.now().subtract(const Duration(hours: 4)),
+        ),
+      ],
     ),
     Post(
       id: '3',
@@ -29,6 +64,7 @@ class PostsProvider extends ChangeNotifier {
       createdAt: DateTime.now().subtract(const Duration(days: 1)),
       likes: 45,
       comments: 12,
+      tags: ['achievement', 'education'],
     ),
     Post(
       id: '4',
@@ -38,6 +74,7 @@ class PostsProvider extends ChangeNotifier {
       createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 3)),
       likes: 6,
       comments: 4,
+      tags: ['music'],
     ),
     Post(
       id: '5',
@@ -47,10 +84,15 @@ class PostsProvider extends ChangeNotifier {
       createdAt: DateTime.now().subtract(const Duration(days: 2)),
       likes: 22,
       comments: 7,
+      location: 'Malibu Beach',
+      tags: ['sunset', 'beach', 'nature'],
     ),
   ];
 
   List<Post> get posts => List.unmodifiable(_posts);
+
+  List<Post> get bookmarkedPosts =>
+      _posts.where((p) => p.isBookmarked).toList();
 
   void addPost(Post post) {
     _posts.insert(0, post);
@@ -73,4 +115,54 @@ class PostsProvider extends ChangeNotifier {
     _posts.removeWhere((p) => p.id == postId);
     notifyListeners();
   }
+
+  void toggleBookmark(String postId) {
+    final index = _posts.indexWhere((p) => p.id == postId);
+    if (index != -1) {
+      _posts[index] = _posts[index].copyWith(
+        isBookmarked: !_posts[index].isBookmarked,
+      );
+      notifyListeners();
+    }
+  }
+
+  void addComment(String postId, PostComment comment) {
+    final index = _posts.indexWhere((p) => p.id == postId);
+    if (index != -1) {
+      final post = _posts[index];
+      final comments = List<PostComment>.from(post.commentList);
+      comments.add(comment);
+      _posts[index] = post.copyWith(
+        commentList: comments,
+        comments: post.comments + 1,
+      );
+      notifyListeners();
+    }
+  }
+
+  void removeComment(String postId, String commentId) {
+    final index = _posts.indexWhere((p) => p.id == postId);
+    if (index != -1) {
+      final post = _posts[index];
+      final comments = post.commentList.where((c) => c.id != commentId).toList();
+      _posts[index] = post.copyWith(
+        commentList: comments,
+        comments: post.comments - 1,
+      );
+      notifyListeners();
+    }
+  }
+
+  List<Post> search(String query) {
+    final lower = query.toLowerCase();
+    return _posts
+        .where((p) =>
+            p.content.toLowerCase().contains(lower) ||
+            p.authorName.toLowerCase().contains(lower) ||
+            p.tags.any((t) => t.toLowerCase().contains(lower)))
+        .toList();
+  }
+
+  List<Post> getPostsByAuthor(String authorId) =>
+      _posts.where((p) => p.authorId == authorId).toList();
 }

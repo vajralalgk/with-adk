@@ -4,6 +4,10 @@ import 'providers/friends_provider.dart';
 import 'providers/posts_provider.dart';
 import 'providers/chat_provider.dart';
 import 'providers/events_provider.dart';
+import 'providers/group_provider.dart';
+import 'providers/story_provider.dart';
+import 'providers/memory_provider.dart';
+import 'providers/notification_provider.dart';
 import 'screens/home_screen.dart';
 
 void main() {
@@ -21,6 +25,10 @@ class FriendsApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PostsProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
         ChangeNotifierProvider(create: (_) => EventsProvider()),
+        ChangeNotifierProvider(create: (_) => GroupProvider()),
+        ChangeNotifierProvider(create: (_) => StoryProvider()),
+        ChangeNotifierProvider(create: (_) => MemoryProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: MaterialApp(
         title: 'Friends',
